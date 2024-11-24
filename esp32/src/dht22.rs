@@ -1,7 +1,6 @@
-
 /// DHT22 driver for ESP32
 pub struct DHT22 {
-    pin: i32
+    pin: i32,
 }
 
 /// DHT22 errors
@@ -17,9 +16,7 @@ impl DHT22 {
 
     /// Create a new DHT22 instance
     pub fn new(pin: i32) -> Self {
-        Self {
-            pin
-        }
+        Self { pin }
     }
 
     /// Get the signal level, max wait and state
@@ -49,7 +46,6 @@ impl DHT22 {
         let mut bit_inx = 7;
 
         unsafe {
-
             gpio_set_direction(self.pin, GPIO_MODE_DEF_OUTPUT);
 
             // pull down for 3 ms for a smooth and nice wake up
@@ -111,7 +107,6 @@ impl DHT22 {
                     bit_inx -= 1;
                 }
             }
-
         }
 
         // == get humidity from Data[0] and Data[1] ==========================
@@ -142,4 +137,3 @@ impl DHT22 {
         }
     }
 }
-

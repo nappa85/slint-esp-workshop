@@ -100,7 +100,7 @@ impl slint::platform::Platform for EspPlatform {
                     let mut touchpad_x = [0];
                     let mut touchpad_y = [0];
                     let mut touchpad_cnt = [0_u8];
-                    
+
                     // Read from ESP touch controller
                     esp_lcd_touch_read_data(touch_handle);
 
@@ -116,7 +116,7 @@ impl slint::platform::Platform for EspPlatform {
                     if touchpad_pressed && touchpad_cnt[0] > 0 {
                         last_position =
                             slint::LogicalPosition::new(touchpad_x[0] as f32, touchpad_y[0] as f32);
-                        
+
                         // Dispatch the pointer moved event
                         self.window
                             .dispatch_event(slint::platform::WindowEvent::PointerMoved {
@@ -198,4 +198,3 @@ pub fn set_brightness(brightness: f32) {
         bsp_display_brightness_set(brightness);
     }
 }
-

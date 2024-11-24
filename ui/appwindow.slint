@@ -2,9 +2,34 @@
 /// The Base class is imported as Window from widgets.slint.
 import { AppWindow } from "widgets.slint";
 
+import { TabWidget } from "std-widgets.slint";
+
+import { TemperaturePage } from "pages.slint";
+
+import { WeatherRecord } from "datatypes.slint";
+
+export global ViewModel {
+    in-out property <WeatherRecord> current;
+
+    in property <string> city-name;
+}
+
 export component MainWindow inherits AppWindow {
     width: 800px;
     height: 600px;
+    status-base-text: ViewModel.city-name;
 
-    Text { text: "Welcome to the Slint Workshop"; }
+    TabWidget {
+        Tab {
+            title: "First page";
+
+            TemperaturePage {
+                humidity-percent: ViewModel.current.humidity_percent;
+                temperature-celsius: ViewModel.current.temperature_celsius;
+            }
+        }
+        Tab {
+            title: "Second page";
+        }
+    }
 }

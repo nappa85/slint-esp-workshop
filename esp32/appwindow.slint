@@ -3,14 +3,26 @@ import { AppWindow } from "../ui/widgets.slint";
 
 import { TabWidget } from "std-widgets.slint";
 
-import { SensorStatus } from "../ui/datatypes.slint";
+import { SensorStatus, WeatherRecord } from "../ui/datatypes.slint";
 
-export { SensorStatus }
+import { TemperaturePage } from "../ui/pages.slint";
 
+export { SensorStatus, WeatherRecord }
+
+export global ViewModel {
+    in property <SensorStatus> sensor-status;
+
+    in property <WeatherRecord> current;
+}
 
 export component MainWindow inherits AppWindow {
     width: 320px;
     height: 240px;
+    
+    status-base-text: ViewModel.sensor-status == SensorStatus.Error ? "Sensor error" : ViewModel.current.timestamp;
 
-    Text { text: "Welcome to the Slint Workshop"; }
+    TemperaturePage {
+        humidity-percent: ViewModel.current.humidity_percent;
+        temperature-celsius: ViewModel.current.temperature_celsius;
+    }
 }

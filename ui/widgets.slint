@@ -1,6 +1,103 @@
+import { Palette, StyleMetrics } from "style.slint";
+
 export component Page inherits Rectangle {
     background: #ffffff;
 }
 
+export component TitleBar inherits Rectangle {
+    in property <string> text <=> text-item.text;
+    
+    width: 100%; // parent.width does not work, because components can't access outside elements
+    height: 32px;
+    background: Palette.background;
+    padding-top: StyleMetrics.padding;
+    padding-bottom: StyleMetrics.padding;
+
+    // To display the text
+    text-item := Text {
+        text: "TitleBar";
+        font-size: 16px;
+    }
+}
+
+export component StatusBar inherits Rectangle {
+    in property <string> text <=> text-item.text;
+
+    background: Palette.background;
+    height: StyleMetrics.status-height; // 12px // (custom-height)
+
+    text-item := Text {
+        width: parent.width;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+// this will be used as the base component for temp/humidity
+export  component Indicator {
+    in property <float> value: 50;
+    in property <float> min-value: 0;
+    in property <float> max-value: 100;
+
+    in property <string> unit: "°C"; // % for humidity
+
+    in property <brush> background <=> fill.background;
+
+    out property <float> level: (Math.clamp(self.value, self.min-value, self.max-value) - self.min-value) / (self.max-value - self.min-value);
+
+    in property <length> bar-width: 30px;
+
+    fill := Rectangle {
+        x: 0;
+        y: parent.height - self.height;
+        width: root.bar-width;
+        height: root.height * root.level;
+    }
+
+    bar := Rectangle {
+        x: 0;
+        border-width: 2px;
+        width: root.bar-width;
+        height: parent.height;
+        border-color: Colors.black;
+    }
+
+    value-text := Text {
+        overflow: TextOverflow.elide;
+        text: "\{root.value.round()} \{root.unit}";
+        font-size: 32px;
+        x: root.bar-width + StyleMetrics.padding;
+    }
+}
+
+export component TemperatureBar inherits Indicator {
+    value: 20;
+    min-value: -20.0;
+    max-value: 50.0;
+    unit: "°C";
+    background: #ff0000.mix(#0000ff, root.level);
+}
+
+export component HumidityBar inherits Indicator {
+    value: 50;
+    min-value: 0.0;
+    max-value: 100.0;
+    unit: "%";
+    background: Colors.blue;
+}
+
 export component AppWindow inherits Window {
+    in property status-base-text <=> status-bar.text;
+
+    VerticalLayout {
+        TitleBar {
+            text: "Slint Weather Station";
+        }
+
+        @children // The actual window context will be placed here
+
+
+        status-bar := StatusBar {
+        }
+    }
 }
